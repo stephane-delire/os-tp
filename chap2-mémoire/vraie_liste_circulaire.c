@@ -22,20 +22,18 @@ struct circularQueue* createQueue() {
     return q;
 }
 
-// Vérifie si la file est pleine
+// Fonction de vérification
 int isFull(struct circularQueue* q) {
     return q->size == QUEUE_SIZE;
 }
-
-// Vérifie si la file est vide
 int isEmpty(struct circularQueue* q) {
     return q->size == 0;
 }
 
-// Ajoute un élément à la queue
+// Ajoute un élément à la file
 void enqueue(struct circularQueue* q, int element) {
     if (isFull(q)) {
-        printf("Queue is full\n");
+        printf("La file est pleine!\n");
         return;
     }
     if (isEmpty(q)) {
@@ -46,10 +44,10 @@ void enqueue(struct circularQueue* q, int element) {
     q->size++;
 }
 
-// Retire et retourne l'élément en tête de la queue
+// Retire et retourne l'élément en tête de la file
 int dequeue(struct circularQueue* q) {
     if (isEmpty(q)) {
-        printf("Queue is empty\n");
+        printf("La file est vide!\n");
         return -1;
     }
     int item = q->items[q->head];
@@ -62,11 +60,11 @@ int dequeue(struct circularQueue* q) {
     return item;
 }
 
-// Affiche la queue
+// Affiche la file
 void printQueue(struct circularQueue* q) {
-    printf("Queue: ");
+    printf("File: ");
     if (isEmpty(q)) {
-        printf("is empty\n");
+        printf("est vide...\n");
         return;
     }
     int i = q->head;
