@@ -1,6 +1,10 @@
 // Vraie liste circulaire
 // Crée a partir de la réponse de l'exo6
 
+//TODO : Verifier le nom des fonctions à implémenter par rapport à l'énoncé
+//TODO : Créer les 2 fonctions qui permettent de faire tourner la liste 
+// circulaire pour retrouver l'entier pair/impair
+
 #include <stdio.h>
 #include <stdlib.h>
 
