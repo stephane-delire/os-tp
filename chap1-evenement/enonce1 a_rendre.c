@@ -15,7 +15,7 @@ struct termios params_termios;
 void disableRawMode() {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &params_termios) != 0) {
         perror("tcsetattr"); // Affiche une erreur si tcsetattr échoue
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); // Termine immédiatemment le programme en indiquant qu'une tâche a echouée > on améliore la portabilité entre les différents systèmes en utilisant EXIT_FAILURE
     }
 }
 
@@ -29,7 +29,7 @@ void enableRawMode() {
     raw.c_lflag &= ~(ECHO | ICANON);
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) != 0) {
         perror("tcsetattr"); // Affiche une erreur si tcsetattr échoue
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); 
     }
 }
 
