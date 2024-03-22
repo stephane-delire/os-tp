@@ -33,7 +33,7 @@ void enableRawMode() {
     }
 }
 
-void handle_alarm(int sig) {
+void handleAlarm(int sig) {
     if (bufferIndex == 0) {
         printf("Buffer vide, programme terminé.\n");
         exit(0);
