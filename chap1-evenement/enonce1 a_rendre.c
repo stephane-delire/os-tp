@@ -5,7 +5,7 @@
 #include <termios.h>
 #include <ctype.h>
 
-// Taille buffer de 1024 octets pour éviter dépassement
+// Taille buffer de 1024 octets pour éviter le dépassement
 #define BUFFER_SIZE 1024
 
 char buffer[BUFFER_SIZE];
@@ -34,7 +34,7 @@ void enableRawMode() {
 }
 
 void handleAlarm(int sig) {
-    if (bufferIndex == 0) {
+    if (bufferIndex == 0) { // Le buffer est vide donc, on termine le programme.
         printf("Buffer vide, programme terminé.\n");
         exit(0);
     } else {
@@ -67,11 +67,11 @@ int main() {
     while (1) {
         if (bufferIndex < BUFFER_SIZE - 1) {
             int c = getchar(); // Utilise getchar() pour lire un caractère.
-            if (c != EOF) {
+            if (c != EOF) { // Vérifie que le caractère lu n'est pas la fin de fichier (EOF) avant de l'ajouter au buffer.
                 buffer[bufferIndex++] = c;
             }
         }
     }
 
-    return 0; // Ce point ne sera jamais atteint.
+    return 0;
 }
