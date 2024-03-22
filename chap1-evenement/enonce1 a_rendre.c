@@ -29,7 +29,7 @@ void enableRawMode() {
     raw.c_lflag &= ~(ECHO | ICANON);
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) != 0) {
         perror("tcsetattr"); // Affiche une erreur si tcsetattr échoue
-        exit(EXIT_FAILURE); 
+        exit(EXIT_FAILURE);
     }
 }
 
