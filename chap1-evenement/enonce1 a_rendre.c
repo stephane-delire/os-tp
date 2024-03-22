@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
+#include <termios.h>
+#include <ctype.h>
+
+// Taille buffer de 1024 octets pour éviter dépassement
+#define BUFFER_SIZE 1024
+
+char buffer[BUFFER_SIZE];
+int bufferIndex = 0;
+struct termios params_termios;
+
+void disableRawMode() {
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &params_termios) != 0) {
+        perror("tcsetattr"); // Affiche une erreur si tcsetattr échoue
+        exit(EXIT_FAILURE);
+    }
+}
+
+void enableRawMode() {
+    if (tcgetattr(STDIN_FILENO, &params_termios) != 0) {
+        perror("tcgetattr"); // Affiche une erreur si tcgetattr échoue
+        exit(EXIT_FAILURE);
+    }
+    atexit(disableRawMode);
+    struct termios raw = params_termios;
+    raw.c_lflag &= ~(ECHO | ICANON);
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) != 0) {
+        perror("tcsetattr"); // Affiche une erreur si tcsetattr échoue
+        exit(EXIT_FAILURE);
+    }
+}
+
+void handle_alarm(int sig) {
+    if (bufferIndex == 0) {
+        printf("Buffer vide, programme terminé.\n");
+        exit(0);
+    } else {
+        for (int i = 0; i < bufferIndex; ++i) {
+            putchar(toupper(buffer[i]));
+        }
+        printf("\n");
+        bufferIndex = 0; // Réinitialise le buffer pour la prochaine accumulation.
+    }
+    alarm(5); // Reprogramme l'alarme pour dans 5 secondes.
+}
+
+void setupAlarmHandler() {
+    struct sigaction sa;
+    sa.sa_handler = handle_alarm;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0; // Pas de flags spécifiques
+
+    if (sigaction(SIGALRM, &sa, NULL) != 0) {
+        perror("sigaction"); // Affiche une erreur si sigaction échoue
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main() {
+    enableRawMode(); // Active le mode non canonique pour permettre la lecture immédiate des caractères.
+    setupAlarmHandler();
+    alarm(5); // Configure le premier SIGALRM pour se déclencher dans 5 secondes.
+
+    while (1) {
+        if (bufferIndex < BUFFER_SIZE - 1) {
+            int c = getchar(); // Utilise getchar() pour lire un caractère.
+            if (c != EOF) {
+                buffer[bufferIndex++] = c;
+            }
+        }
+    }
+
+    return 0; // Ce point ne sera jamais atteint.
+}
