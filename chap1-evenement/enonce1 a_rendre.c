@@ -65,7 +65,7 @@ int main() {
     alarm(5); // Configure le premier SIGALRM pour se déclencher dans 5 secondes.
 
     while (1) {
-        if (bufferIndex < BUFFER_SIZE - 1) {
+        if (bufferIndex < BUFFER_SIZE - 1) { // Vérifie que l'index ne dépasse pas la taille du buffer
             int c = getchar(); // Utilise getchar() pour lire un caractère.
             if (c != EOF) { // Vérifie que le caractère lu n'est pas la fin de fichier (EOF) avant de l'ajouter au buffer.
                 buffer[bufferIndex++] = c;
