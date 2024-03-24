@@ -59,7 +59,7 @@ void handleAlarm(int sig) {
 
 void setupAlarmHandler() {
     struct sigaction sa;
-    sa.sa_handler = handle_alarm;
+    sa.sa_handler = handleAlarm;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0; // Pas de flags spécifiques
 
