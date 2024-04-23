@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <math.h>
 
-#define NUMBER_COUNT 1224
+#define NUMBER_COUNT 1024
 #define THREAD_COUNT 4
 
 typedef unsigned int index;
