@@ -8,6 +8,7 @@
 #define NUMBER_COUNT 1000000
 #define THREAD_COUNT 10
 #define MAX_DEPTH 0  // Profondeur maximale pour la création de threads
+#define MAX_RANDOM 10000000
 
 typedef unsigned int index;
 typedef unsigned int count;
@@ -94,7 +95,7 @@ int main() {
     int *numbers = malloc(NUMBER_COUNT * sizeof(int));
     srand(time(NULL));
     for (index i = 0; i < NUMBER_COUNT; i++) {
-        numbers[i] = rand() % 10000000;
+        numbers[i] = rand() % MAX_RANDOM;
     }
 
     struct timeval start_time, end_time;
