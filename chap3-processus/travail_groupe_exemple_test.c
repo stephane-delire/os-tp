@@ -57,7 +57,16 @@ void merge(int array[], index start, index middle, index final) {
 }
 
 int main() {
-    int array[] = {9, 3, 4, 1, 7, 5, 8, 2, 6, 0};
+    #include <time.h>
+
+    int generate_random_number(int min, int max) {
+        srand(time(NULL));
+        return (rand() % (max - min + 1)) + min;
+    }
+
+    for (int i = 0; i < 100000; i++) {
+        array[i] = generate_random_number(0, 100000);
+    }
     int n = sizeof(array) / sizeof(array[0]);
 
     printf("Array avant le tri:\n");
