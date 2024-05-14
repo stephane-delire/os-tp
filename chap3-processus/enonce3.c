@@ -1,3 +1,13 @@
+/*******************************************************************************
+* S-INFO-054 --- Solution pour Travail 03                                    *
+* Groupe 05                                                                    *
+* Membres:                                                                     *
+* - Amory Delcampe                                                             *
+* - Nathan Rombaut                                                             *
+* - Guy Gillain                                                                *
+* - Stéphane Delire                                                            *
+*******************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -6,7 +16,7 @@
 #include <unistd.h>
 #include <time.h>
 
-#define NUM_ELEMENTS 1000000
+#define NUM_ELEMENTS 250000000
 #define NUM_THREADS 10
 #define MAX_THREAD_DEPTH 2
 #define MAX_RANDOM_VALUE 10000000
