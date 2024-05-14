@@ -16,8 +16,50 @@
 #include <unistd.h>
 #include <time.h>
 
-#define NUM_ELEMENTS 250000000
+// On a essayé jusqu'à 1.000.000.000 pour NUM_ELEMENTS et cela était fonctionnelle.
+#define NUM_ELEMENTS 1000000
 #define NUM_THREADS 10
+
+// A la suite de multiples tests réalisés, nous avons constaté que le meilleur choix était deux
+// #define NUMBER_COUNT 1000000
+// #define THREAD_COUNT 10
+// #define MAX_DEPTH 5  // Profondeur maximale pour la création de threads
+// Temps d'exécution : 219151 microsecondes
+
+// #define NUMBER_COUNT 1000000
+// #define THREAD_COUNT 10
+// #define MAX_DEPTH 8  // Profondeur maximale pour la création de threads
+// Temps d'exécution : 842267 microsecondes
+
+// #define NUMBER_COUNT 1000000
+// #define THREAD_COUNT 10
+// #define MAX_DEPTH 2  // Profondeur maximale pour la création de threads
+// Temps d'exécution : 51858 microsecondes
+
+// #define NUMBER_COUNT 1000000
+// #define THREAD_COUNT 10
+// #define MAX_DEPTH 0  // Profondeur maximale pour la création de threads
+// Temps d'exécution : 167334 microsecondes
+
+
+// Cas 1: MAX_DEPTH = 5
+
+//     Temps d'exécution : 219151 microsecondes.
+//     Avec une profondeur maximale de 5, il semble qu'il y a un bon équilibre entre le parallélisme et le coût de gestion des threads. La création de threads est suffisante pour tirer parti des coeurs multiples sans surcharger le système par un excès de commutation de contexte ou de synchronisation.
+
+// Cas 2: MAX_DEPTH = 8
+
+//     Temps d'exécution : 842267 microsecondes.
+//     Augmenter la profondeur maximale à 8 a considérablement augmenté le temps d'exécution. Cela peut être dû à plusieurs facteurs:
+//         Surcharge de gestion des threads: À une profondeur de 8, le nombre de threads qui peuvent être créés augmente exponentiellement. Cette surcharge inclut la création de threads, la commutation de contexte, et surtout la synchronisation et la gestion des verrous lors des fusions.
+//         Diminution des performances due à la concurrence excessive : Trop de threads tentant d'accéder à la mémoire et de réaliser des opérations en parallèle peuvent causer une saturation de la bande passante mémoire et un ralentissement global dû à la contention.
+
+// Cas 3: MAX_DEPTH = 2
+
+//     Temps d'exécution : 51858 microsecondes.
+//     Ce cas montre le temps d'exécution le plus rapide parmi les trois configurations. Limiter la profondeur de création des threads à 2 signifie que le tri par fusion se décompose rapidement en tâches parallèles sans créer un grand nombre de threads. Cela permet de minimiser la surcharge liée à la gestion des threads tout en exploitant suffisamment le parallélisme pour améliorer les performances.
+//     Utilisation optimale des ressources : Avec moins de threads, il y a moins de concurrence pour les ressources du système et moins de temps passé en attente de verrous ou en commutation de contexte.
+
 #define MAX_THREAD_DEPTH 2
 #define MAX_RANDOM_VALUE 10000000
 
@@ -40,9 +82,10 @@ void mergeSubarrays(int *array, index_t start, index_t middle, index_t end) {
     int *leftTemp = malloc(leftSize * sizeof(int));
     int *rightTemp = malloc(rightSize * sizeof(int));
 
+    // On s'assure de libérer toute mémoire allouée en cas d'echec d'allocation
     if (!leftTemp || !rightTemp) {
         perror("Échec de l'allocation de mémoire pour la fusion");
-        free(leftTemp); // Assurez-vous de libérer toute mémoire allouée si l'autre échoue.
+        free(leftTemp);
         free(rightTemp);
         exit(EXIT_FAILURE);
     }
