@@ -4,118 +4,149 @@
 #include <sys/time.h>
 #include <math.h>
 #include <unistd.h>
+#include <time.h>
 
-#define NUMBER_COUNT 1000000
-#define THREAD_COUNT 10
-#define MAX_DEPTH 0  // Profondeur maximale pour la création de threads
-#define MAX_RANDOM 10000000
+#define NUM_ELEMENTS 1000000
+#define NUM_THREADS 10
+#define MAX_THREAD_DEPTH 2
+#define MAX_RANDOM_VALUE 10000000
 
-typedef unsigned int index;
-typedef unsigned int count;
+typedef unsigned int index_t;
+typedef unsigned int count_t;
 
-struct range {
+struct subrange {
     int *array;
-    index start, final;
-    int depth;  // Ajout d'un contrôle de profondeur
+    index_t start, end;
+    int depth; 
 };
 
-pthread_t threads[THREAD_COUNT];
-struct range tasks[THREAD_COUNT];
-pthread_mutex_t mutex;  // Mutex pour contrôler les accès concurrents pendant les fusions
+pthread_t thread_ids[NUM_THREADS];
+struct subrange tasks[NUM_THREADS];
+pthread_mutex_t merge_mutex;
 
-void merge(int *array, index start, index middle, index final) {
-    index n1 = middle - start + 1;
-    index n2 = final - middle;
-    int *L = malloc(n1 * sizeof(int));
-    int *R = malloc(n2 * sizeof(int));
+void mergeSubarrays(int *array, index_t start, index_t middle, index_t end) {
+    index_t leftSize = middle - start + 1;
+    index_t rightSize = end - middle;
+    int *leftTemp = malloc(leftSize * sizeof(int));
+    int *rightTemp = malloc(rightSize * sizeof(int));
 
-    for (index i = 0; i < n1; i++) {
-        L[i] = array[start + i];
+    if (!leftTemp || !rightTemp) {
+        perror("Échec de l'allocation de mémoire pour la fusion");
+        free(leftTemp); // Assurez-vous de libérer toute mémoire allouée si l'autre échoue.
+        free(rightTemp);
+        exit(EXIT_FAILURE);
     }
-    for (index j = 0; j < n2; j++) {
-        R[j] = array[middle + 1 + j];
+
+    for (index_t i = 0; i < leftSize; i++) {
+        leftTemp[i] = array[start + i];
+    }
+    for (index_t j = 0; j < rightSize; j++) {
+        rightTemp[j] = array[middle + 1 + j];
     }
 
-    index i = 0, j = 0, k = start;
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            array[k++] = L[i++];
+    index_t leftIndex = 0, rightIndex = 0, mergedIndex = start;
+    while (leftIndex < leftSize && rightIndex < rightSize) {
+        if (leftTemp[leftIndex] <= rightTemp[rightIndex]) {
+            array[mergedIndex++] = leftTemp[leftIndex++];
         } else {
-            array[k++] = R[j++];
+            array[mergedIndex++] = rightTemp[rightIndex++];
         }
     }
 
-    while (i < n1) {
-        array[k++] = L[i++];
+    // Copie des éléments restants des sous-tableaux si nécessaire
+    while (leftIndex < leftSize) {
+        array[mergedIndex++] = leftTemp[leftIndex++];
     }
-    while (j < n2) {
-        array[k++] = R[j++];
+    while (rightIndex < rightSize) {
+        array[mergedIndex++] = rightTemp[rightIndex++];
     }
 
-    free(L);
-    free(R);
+    free(leftTemp);
+    free(rightTemp);
 }
 
-void merge_sort(int *array, index start, index final) {
-    if (start < final) {
-        index middle = start + (final - start) / 2;
-        merge_sort(array, start, middle);
-        merge_sort(array, middle + 1, final);
-        merge(array, start, middle, final);
+void recursiveMergeSort(int *array, index_t start, index_t end) {
+    if (start < end) {
+        index_t middle = start + (end - start) / 2;
+        recursiveMergeSort(array, start, middle);
+        recursiveMergeSort(array, middle + 1, end);
+        mergeSubarrays(array, start, middle, end);
     }
 }
 
-void *threaded_merge_sort(void *arg) {
-    struct range *r = (struct range *)arg;
-    if (r->start < r->final) {
-        if (r->depth < MAX_DEPTH) {
-            index mid = r->start + (r->final - r->start) / 2;
+void *parallelMergeSort(void *arg) {
+    struct subrange *range = (struct subrange *)arg;
+    if (range->start < range->end) {
+        if (range->depth < MAX_THREAD_DEPTH) {
+            index_t mid = range->start + (range->end - range->start) / 2;
 
-            struct range left = {r->array, r->start, mid, r->depth + 1};
-            struct range right = {r->array, mid + 1, r->final, r->depth + 1};
+            struct subrange left = {range->array, range->start, mid, range->depth + 1};
+            struct subrange right = {range->array, mid + 1, range->end, range->depth + 1};
 
             pthread_t left_thread, right_thread;
-            pthread_create(&left_thread, NULL, threaded_merge_sort, &left);
-            pthread_create(&right_thread, NULL, threaded_merge_sort, &right);
+            pthread_create(&left_thread, NULL, parallelMergeSort, &left);
+            pthread_create(&right_thread, NULL, parallelMergeSort, &right);
 
             pthread_join(left_thread, NULL);
             pthread_join(right_thread, NULL);
 
-            pthread_mutex_lock(&mutex);  // Lock for merging
-            merge(r->array, r->start, mid, r->final);
-            pthread_mutex_unlock(&mutex);  // Unlock after merging
+            pthread_mutex_lock(&merge_mutex);  // Verrouillage pour la fusion
+            mergeSubarrays(range->array, range->start, mid, range->end);
+            pthread_mutex_unlock(&merge_mutex);  // Déverrouillage après la fusion
         } else {
-            merge_sort(r->array, r->start, r->final);
+            recursiveMergeSort(range->array, range->start, range->end);
         }
     }
     return NULL;
 }
 
 int main() {
-    int *numbers = malloc(NUMBER_COUNT * sizeof(int));
-    srand(time(NULL));
-    for (index i = 0; i < NUMBER_COUNT; i++) {
-        numbers[i] = rand() % MAX_RANDOM;
+    int *randomNumbers = malloc(NUM_ELEMENTS * sizeof(int));
+
+    FILE *fp = fopen("/dev/urandom", "r");
+    if (fp == NULL) {
+        perror("Échec de l'ouverture de /dev/urandom");
+        // Utilisation de srand et rand comme méthode de secours
+        printf("Utilisation de srand et rand pour la génération de nombres aléatoires.\n");
+        srand(time(NULL));
+        for (index_t i = 0; i < NUM_ELEMENTS; i++) {
+            randomNumbers[i] = rand() % MAX_RANDOM_VALUE;
+        }
+    } else {
+        unsigned int num;
+        for (index_t i = 0; i < NUM_ELEMENTS; i++) {
+            if (fread(&num, sizeof(num), 1, fp) != 1) {
+                perror("Échec de la lecture de /dev/urandom");
+                fclose(fp);
+                free(randomNumbers);
+                exit(1);
+            }
+            randomNumbers[i] = num % MAX_RANDOM_VALUE;
+        }
+        fclose(fp);
     }
 
-    struct timeval start_time, end_time;
-    gettimeofday(&start_time, NULL);
+    struct timeval startTime, endTime;
+    gettimeofday(&startTime, NULL);
 
-    pthread_mutex_init(&mutex, NULL);
-    struct range main_range = {numbers, 0, NUMBER_COUNT - 1, 0};
-    threaded_merge_sort(&main_range);
+    pthread_mutex_init(&merge_mutex, NULL);
+    struct subrange mainRange = {randomNumbers, 0, NUM_ELEMENTS - 1, 0};
+    parallelMergeSort(&mainRange);
+    pthread_mutex_destroy(&merge_mutex);
 
-    gettimeofday(&end_time, NULL);
-    long seconds = (end_time.tv_sec - start_time.tv_sec);
-    long micros = ((seconds * 1000000) + end_time.tv_usec) - (start_time.tv_usec);
-    printf("Temps d'exécution : %ld microsecondes\n", micros);
+    gettimeofday(&endTime, NULL);
 
-    for (index i = 0; i < NUMBER_COUNT; i++) {
-        printf("%d ", numbers[i]);
+    long seconds = (endTime.tv_sec - startTime.tv_sec);
+    long microseconds = ((seconds * 1000000) + endTime.tv_usec) - (startTime.tv_usec);
+    double executionTimeSeconds = seconds + microseconds / 1e6;
+
+    for (index_t i = 0; i < NUM_ELEMENTS; i++) {
+        printf("%d ", randomNumbers[i]);
     }
+    
+    free(randomNumbers);
     printf("\n");
-    printf("Temps d'exécution : %ld microsecondes\n", micros);
-    pthread_mutex_destroy(&mutex);
-    free(numbers);
+    printf("Temps d'exécution : %ld microsecondes (%.6f secondes)\n", microseconds, executionTimeSeconds);
+    
     return 0;
 }

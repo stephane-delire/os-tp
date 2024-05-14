@@ -18,6 +18,7 @@ Temps d'exécution : 167334 microsecondes
 #define THREAD_COUNT 10
 #define MAX_DEPTH 0  // Profondeur maximale pour la création de threads
 
+
 Cas 1: MAX_DEPTH = 5
 
     Temps d'exécution : 219151 microsecondes.
