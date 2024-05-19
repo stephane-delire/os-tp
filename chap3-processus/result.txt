@@ -1,38 +1,129 @@
-Temps d'exécution : 219151 microsecondes
-#define NUMBER_COUNT 1000000
-#define THREAD_COUNT 10
-#define MAX_DEPTH 5  // Profondeur maximale pour la création de threads
+Configuration avec 1 threads:
+Test 1: Temps d'exécution = 0.165964 secondes
+Test 2: Temps d'exécution = 0.138933 secondes
+Test 3: Temps d'exécution = 0.143861 secondes
+Test 4: Temps d'exécution = 0.138353 secondes
+Test 5: Temps d'exécution = 0.138428 secondes
+Test 6: Temps d'exécution = 0.134490 secondes
+Test 7: Temps d'exécution = 0.145599 secondes
+Test 8: Temps d'exécution = 0.144468 secondes
+Test 9: Temps d'exécution = 0.128344 secondes
+Test 10: Temps d'exécution = 0.133993 secondes
+Temps moyen pour 1 threads = 0.141243 secondes
 
-Temps d'exécution : 842267 microsecondes
-#define NUMBER_COUNT 1000000
-#define THREAD_COUNT 10
-#define MAX_DEPTH 8  // Profondeur maximale pour la création de threads
+Configuration avec 2 threads:
+Test 1: Temps d'exécution = 0.066840 secondes
+Test 2: Temps d'exécution = 0.065181 secondes
+Test 3: Temps d'exécution = 0.063787 secondes
+Test 4: Temps d'exécution = 0.063272 secondes
+Test 5: Temps d'exécution = 0.063860 secondes
+Test 6: Temps d'exécution = 0.063144 secondes
+Test 7: Temps d'exécution = 0.063158 secondes
+Test 8: Temps d'exécution = 0.064171 secondes
+Test 9: Temps d'exécution = 0.063862 secondes
+Test 10: Temps d'exécution = 0.064200 secondes
+Temps moyen pour 2 threads = 0.064147 secondes
 
-Temps d'exécution : 51858 microsecondes
-#define NUMBER_COUNT 1000000
-#define THREAD_COUNT 10
-#define MAX_DEPTH 2  // Profondeur maximale pour la création de threads
+Configuration avec 3 threads:
+Test 1: Temps d'exécution = 0.043363 secondes
+Test 2: Temps d'exécution = 0.044162 secondes
+Test 3: Temps d'exécution = 0.043300 secondes
+Test 4: Temps d'exécution = 0.043122 secondes
+Test 5: Temps d'exécution = 0.043396 secondes
+Test 6: Temps d'exécution = 0.042700 secondes
+Test 7: Temps d'exécution = 0.042605 secondes
+Test 8: Temps d'exécution = 0.043249 secondes
+Test 9: Temps d'exécution = 0.043447 secondes
+Test 10: Temps d'exécution = 0.044297 secondes
+Temps moyen pour 3 threads = 0.043364 secondes
 
-Temps d'exécution : 167334 microsecondes
-#define NUMBER_COUNT 1000000
-#define THREAD_COUNT 10
-#define MAX_DEPTH 0  // Profondeur maximale pour la création de threads
+Configuration avec 4 threads:
+Test 1: Temps d'exécution = 0.031907 secondes
+Test 2: Temps d'exécution = 0.033021 secondes
+Test 3: Temps d'exécution = 0.032284 secondes
+Test 4: Temps d'exécution = 0.033235 secondes
+Test 5: Temps d'exécution = 0.033519 secondes
+Test 6: Temps d'exécution = 0.034794 secondes
+Test 7: Temps d'exécution = 0.031616 secondes
+Test 8: Temps d'exécution = 0.032816 secondes
+Test 9: Temps d'exécution = 0.033016 secondes
+Test 10: Temps d'exécution = 0.033629 secondes
+Temps moyen pour 4 threads = 0.032984 secondes
 
+Configuration avec 5 threads:
+Test 1: Temps d'exécution = 0.027136 secondes
+Test 2: Temps d'exécution = 0.025575 secondes
+Test 3: Temps d'exécution = 0.026625 secondes
+Test 4: Temps d'exécution = 0.026455 secondes
+Test 5: Temps d'exécution = 0.026259 secondes
+Test 6: Temps d'exécution = 0.027149 secondes
+Test 7: Temps d'exécution = 0.028358 secondes
+Test 8: Temps d'exécution = 0.026735 secondes
+Test 9: Temps d'exécution = 0.028245 secondes
+Test 10: Temps d'exécution = 0.026758 secondes
+Temps moyen pour 5 threads = 0.026930 secondes
 
-Cas 1: MAX_DEPTH = 5
+Configuration avec 6 threads:
+Test 1: Temps d'exécution = 0.023803 secondes
+Test 2: Temps d'exécution = 0.023290 secondes
+Test 3: Temps d'exécution = 0.032790 secondes
+Test 4: Temps d'exécution = 0.024964 secondes
+Test 5: Temps d'exécution = 0.025756 secondes
+Test 6: Temps d'exécution = 0.026691 secondes
+Test 7: Temps d'exécution = 0.027111 secondes
+Test 8: Temps d'exécution = 0.023151 secondes
+Test 9: Temps d'exécution = 0.028519 secondes
+Test 10: Temps d'exécution = 0.031577 secondes
+Temps moyen pour 6 threads = 0.026765 secondes
 
-    Temps d'exécution : 219151 microsecondes.
-    Avec une profondeur maximale de 5, il semble que vous avez un bon équilibre entre le parallélisme et le coût de gestion des threads. La création de threads est suffisante pour tirer parti des cœurs multiples sans submerger le système par un excès de commutation de contexte ou de synchronisation.
+Configuration avec 7 threads:
+Test 1: Temps d'exécution = 0.028779 secondes
+Test 2: Temps d'exécution = 0.023872 secondes
+Test 3: Temps d'exécution = 0.033199 secondes
+Test 4: Temps d'exécution = 0.027122 secondes
+Test 5: Temps d'exécution = 0.033717 secondes
+Test 6: Temps d'exécution = 0.028949 secondes
+Test 7: Temps d'exécution = 0.031552 secondes
+Test 8: Temps d'exécution = 0.028346 secondes
+Test 9: Temps d'exécution = 0.021298 secondes
+Test 10: Temps d'exécution = 0.025876 secondes
+Temps moyen pour 7 threads = 0.028271 secondes
 
-Cas 2: MAX_DEPTH = 8
+Configuration avec 8 threads:
+Test 1: Temps d'exécution = 0.042923 secondes
+Test 2: Temps d'exécution = 0.022923 secondes
+Test 3: Temps d'exécution = 0.022377 secondes
+Test 4: Temps d'exécution = 0.022354 secondes
+Test 5: Temps d'exécution = 0.029371 secondes
+Test 6: Temps d'exécution = 0.024617 secondes
+Test 7: Temps d'exécution = 0.038562 secondes
+Test 8: Temps d'exécution = 0.037247 secondes
+Test 9: Temps d'exécution = 0.045728 secondes
+Test 10: Temps d'exécution = 0.055570 secondes
+Temps moyen pour 8 threads = 0.034167 secondes
 
-    Temps d'exécution : 842267 microsecondes.
-    Augmenter la profondeur maximale à 8 a considérablement augmenté le temps d'exécution. Cela peut être dû à plusieurs facteurs:
-        Surcharge de gestion des threads: À une profondeur de 8, le nombre de threads qui peuvent être créés augmente exponentiellement. Cette surcharge inclut la création de threads, la commutation de contexte, et surtout la synchronisation et la gestion des verrous lors des fusions.
-        Diminution des performances due à la concurrence excessive : Trop de threads tentant d'accéder à la mémoire et de réaliser des opérations en parallèle peuvent causer une saturation de la bande passante mémoire et un ralentissement global dû à la contention.
+Configuration avec 9 threads:
+Test 1: Temps d'exécution = 0.037989 secondes
+Test 2: Temps d'exécution = 0.031267 secondes
+Test 3: Temps d'exécution = 0.032571 secondes
+Test 4: Temps d'exécution = 0.025260 secondes
+Test 5: Temps d'exécution = 0.028307 secondes
+Test 6: Temps d'exécution = 0.024703 secondes
+Test 7: Temps d'exécution = 0.035253 secondes
+Test 8: Temps d'exécution = 0.034382 secondes
+Test 9: Temps d'exécution = 0.031065 secondes
+Test 10: Temps d'exécution = 0.020035 secondes
+Temps moyen pour 9 threads = 0.030083 secondes
 
-Cas 3: MAX_DEPTH = 2
-
-    Temps d'exécution : 51858 microsecondes.
-    Ce cas montre le temps d'exécution le plus rapide parmi les trois configurations. Limiter la profondeur de création des threads à 2 signifie que le tri par fusion se décompose rapidement en tâches parallèles sans créer un grand nombre de threads. Cela permet de minimiser la surcharge liée à la gestion des threads tout en exploitant suffisamment le parallélisme pour améliorer les performances.
-    Utilisation optimale des ressources : Avec moins de threads, il y a moins de concurrence pour les ressources du système et moins de temps passé en attente de verrous ou en commutation de contexte.
+Configuration avec 10 threads:
+Test 1: Temps d'exécution = 0.037333 secondes
+Test 2: Temps d'exécution = 0.027265 secondes
+Test 3: Temps d'exécution = 0.032591 secondes
+Test 4: Temps d'exécution = 0.030026 secondes
+Test 5: Temps d'exécution = 0.027305 secondes
+Test 6: Temps d'exécution = 0.033770 secondes
+Test 7: Temps d'exécution = 0.035064 secondes
+Test 8: Temps d'exécution = 0.022513 secondes
+Test 9: Temps d'exécution = 0.037431 secondes
+Test 10: Temps d'exécution = 0.039244 secondes
+Temps moyen pour 10 threads = 0.032254 secondes
