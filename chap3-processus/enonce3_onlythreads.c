@@ -3,9 +3,9 @@
 #include <pthread.h>
 #include <sys/time.h>
 
-#define NUM_ELEMENTS 1000000
-#define MAX_THREADS 10  // Nombre maximal de threads
-#define NUM_TESTS 10    // Nombre de tests par configuration de threads
+#define NUM_ELEMENTS 1000000 // Définit le nombre total d'éléments à trier
+#define MAX_THREADS 10        // Nombre maximal de threads utilisables
+#define NUM_TESTS 10          // Nombre de tests effectués pour chaque configuration de thread
 
 typedef unsigned int index_t;
 
@@ -14,6 +14,7 @@ struct subrange {
     index_t start, end;
 };
 
+// Fusionne deux sous-segments d'un tableau en un seul segment trié
 void merge(int *array, index_t start, index_t middle, index_t end) {
     index_t n1 = middle - start + 1;
     index_t n2 = end - middle;
@@ -32,8 +33,7 @@ void merge(int *array, index_t start, index_t middle, index_t end) {
 
     index_t i = 0, j = 0, k = start;
     while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) array[k++] = L[i++];
-        else array[k++] = R[j++];
+        array[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
     }
 
     while (i < n1) array[k++] = L[i++];
@@ -43,6 +43,7 @@ void merge(int *array, index_t start, index_t middle, index_t end) {
     free(R);
 }
 
+// Fonction exécutée par chaque thread pour trier son segment du tableau
 void *merge_sort(void *arg) {
     struct subrange *range = (struct subrange *)arg;
     if (range->start < range->end) {
@@ -57,15 +58,18 @@ void *merge_sort(void *arg) {
     return NULL;
 }
 
+// Fonction principale qui configure et exécute les tests de tri fusion parallèle
 int main() {
     struct timeval start_time, end_time;
     double best_time = __DBL_MAX__;
     int best_thread_count = 0;
 
+    // Teste différentes configurations de threads de 1 à MAX_THREADS
     for (int num_threads = 1; num_threads <= MAX_THREADS; num_threads++) {
         double total_time = 0.0;
 
         printf("Configuration avec %d threads:\n", num_threads);
+        // Répète le test NUM_TESTS fois pour obtenir une moyenne fiable
         for (int test = 0; test < NUM_TESTS; test++) {
             int *array = malloc(NUM_ELEMENTS * sizeof(int));
             if (!array) {
@@ -73,6 +77,7 @@ int main() {
                 return 1;
             }
 
+            // Remplissage du tableau avec des nombres aléatoires
             srand(time(NULL));
             for (index_t i = 0; i < NUM_ELEMENTS; i++) {
                 array[i] = rand() % 100000;
@@ -84,6 +89,7 @@ int main() {
             struct subrange ranges[num_threads];
             index_t length = NUM_ELEMENTS / num_threads;
 
+            // Création des threads pour effectuer le tri fusion en parallèle
             for (int i = 0; i < num_threads; i++) {
                 ranges[i].array = array;
                 ranges[i].start = i * length;
@@ -97,6 +103,7 @@ int main() {
                 }
             }
 
+            // Attente de la fin de tous les threads
             for (int i = 0; i < num_threads; i++) {
                 pthread_join(threads[i], NULL);
             }
@@ -115,12 +122,13 @@ int main() {
         double average_time = total_time / NUM_TESTS;
         printf("Temps moyen pour %d threads = %.6f secondes\n\n", num_threads, average_time);
 
+        // Enregistrement du meilleur temps et du nombre de threads correspondant
         if (average_time < best_time) {
             best_time = average_time;
             best_thread_count = num_threads;
         }
     }
 
-    printf("Meilleure configuration: %d threads avec un temps moyen d'exécution de %.6f secondes\n", best_thread_count, best_time);
+    printf("Meilleur configuration: %d threads avec un temps moyen d'exécution de %.6f secondes\n", best_thread_count, best_time);
     return 0;
 }
