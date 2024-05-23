@@ -1,9 +1,19 @@
+/*******************************************************************************
+* S-INFO-054 --- Solution pour Travail 03                                    *
+* Groupe 05                                                                    *
+* Membres:                                                                     *
+* - Amory Delcampe                                                             *
+* - Nathan Rombaut                                                             *
+* - Guy Gillain                                                                *
+* - Stéphane Delire                                                            *
+*******************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
 
-#define NUM_ELEMENTS 1000000 // Définit le nombre total d'éléments à trier
+#define NUM_ELEMENTS 1000000  // Définit le nombre total d'éléments à trier
 #define MAX_THREADS 10        // Nombre maximal de threads utilisables
 #define NUM_TESTS 10          // Nombre de tests effectués pour chaque configuration de thread
 
